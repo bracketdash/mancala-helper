@@ -32,10 +32,76 @@ body {
   width: 352px;
 }
 
-.row {
+/* BOARD */
+
+.board {
+  align-items: center;
+  background: #feb;
+  border-radius: 5px;
+  border: 1px solid #640;
   display: flex;
-  gap: 2px;
+  gap: 3px;
+  justify-content: center;
+  padding: 4px 0;
+  user-select: none;
 }
+
+.big-pocket,
+.cell {
+  background: #eda;
+  border: 1px solid #640;
+  color: #420;
+  font-family: Verdana, sans-serif;
+  font-size: 18px;
+  text-align: center;
+  width: 38px;
+}
+
+.big-pocket {
+  border-radius: 19px;
+  height: 81px;
+  line-height: 81px;
+}
+
+.smol-pockets {
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  justify-content: center;
+}
+
+.row {
+  align-items: center;
+  display: flex;
+  gap: 3px;
+  justify-content: center;
+}
+
+.cell {
+  border-radius: 50%;
+  height: 38px;
+  line-height: 38px;
+}
+
+.cell:not(.empty) {
+  cursor: pointer;
+}
+
+.cell:not(.empty):hover {
+  background: #ffc;
+}
+
+.cell:not(.empty):active {
+  background: #dc9;
+}
+
+.cell.suggested {
+  border-color: #369;
+  box-shadow: inset 0 0 0 2px #369;
+}
+
+/* CONTROLS */
 
 .depth-gauge {
   align-items: center;

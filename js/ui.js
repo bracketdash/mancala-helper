@@ -73,4 +73,5 @@ function updateDOM(minnie, game) {
   applySuggestions(minnie, game);
 }
 
-init();
+// TODO: uncomment when in working condition
+// init();
