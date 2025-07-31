@@ -7,11 +7,10 @@ function applySuggestions(minnie, game) {
   console.time("thinking");
   requestAnimationFrame(() => {
     setTimeout(() => {
-      // TODO: update once game.js is done
       const rows = Array.from(document.querySelectorAll(".row"));
       const state = game.getState();
       [1, 2].forEach((player) => {
-        const { ri, ci } = minnie
+        const [ri, ci] = minnie
           .getScoredMoves(state, player)
           .sort((a, b) => (a.score <= b.score ? 1 : -1))[0].move;
         rows[ri].children[ci].classList.add("suggested");
@@ -35,20 +34,19 @@ function init() {
   const game = new MancalaGame();
   const minnie = new MinnieMax({
     applyMove: game.applyMove.bind(game),
-    depth: 7, // TODO: adjust after testing
+    depth: 7,
     evaluate: game.evaluate.bind(game),
     generateMoves: game.generateMoves,
     isGameOver: game.isGameOver,
   });
-  // TODO: update selector to clickable pockets
   document.querySelectorAll(".row").forEach((row, ri) => {
     Array.from(row.children).forEach((cell, ci) => {
       cell.addEventListener("click", () => {
         const state = game.getState();
-        if (!game.isPiece(state[ri][ci]) || game.isGameOver(state)) {
+        if (cell.innerText === "0" || game.isGameOver(state)) {
           return;
         }
-        game.pushState(game.applyMove(state, { ri, ci }));
+        game.pushState(game.applyMove(state, [ri, ci]));
         updateDOM(minnie, game);
       });
     });
@@ -69,9 +67,18 @@ function init() {
 }
 
 function updateDOM(minnie, game) {
-  // TODO
+  const state = game.getState();
+  const bigPockets = document.querySelectorAll(".big-pocket");
+  state.bigPockets.forEach((value, index) => {
+    bigPockets[index].innerHTML = value;
+  });
+  const rows = document.querySelectorAll(".row");
+  state.smolPockets.forEach((row, rowIndex) => {
+    row.forEach((cell, cellIndex) => {
+      rows[rowIndex].children[cellIndex].innerHTML = cell;
+    });
+  });
   applySuggestions(minnie, game);
 }
 
-// TODO: uncomment when in working condition
-// init();
+init();

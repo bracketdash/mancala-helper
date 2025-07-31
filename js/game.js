@@ -3,9 +3,13 @@ const HISTORY_LOCALSTORAGE_KEY = "mancalahistory";
 class MancalaGame {
   constructor() {
     this.history = [
-      [
-        // TODO
-      ],
+      {
+        bigPockets: [0, 0],
+        smolPockets: [
+          [4, 4, 4, 4, 4, 4],
+          [4, 4, 4, 4, 4, 4],
+        ],
+      },
     ];
     const storedHistory = localStorage?.getItem(HISTORY_LOCALSTORAGE_KEY);
     if (storedHistory) {
@@ -27,14 +31,21 @@ class MancalaGame {
 
   applyMove(state, move) {
     // TODO
+    return state;
   }
 
   evaluate(state, player) {
-    // TODO
+    return state.bigPockets[player - 1];
   }
 
   generateMoves(state, player) {
-    // TODO
+    const moves = [];
+    state.smolPockets[player - 1].forEach((value, index) => {
+      if (value > 0) {
+        moves.push([player - 1, index]);
+      }
+    });
+    return moves;
   }
 
   getState() {
@@ -42,7 +53,7 @@ class MancalaGame {
   }
 
   isGameOver(state) {
-    // TODO
+    return state.smolPockets.every((row) => row.every((cell) => cell === 0));
   }
 
   pushState(state) {
