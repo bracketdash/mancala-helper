@@ -37,6 +37,7 @@ function init() {
     depth: 7,
     evaluate: game.evaluate.bind(game),
     generateMoves: game.generateMoves,
+    getPlayerFromState: true,
     isGameOver: game.isGameOver,
   });
   document.querySelectorAll(".row").forEach((row, ri) => {

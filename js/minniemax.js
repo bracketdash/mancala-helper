@@ -4,6 +4,7 @@ class MinnieMax {
     this.depth = config.depth;
     this.evaluate = config.evaluate;
     this.generateMoves = config.generateMoves;
+    this.getPlayerFromState = config.getPlayerFromState ?? false;
     this.isGameOver = config.isGameOver;
     const storedDepth = localStorage?.getItem("depth");
     if (storedDepth) {
@@ -43,15 +44,8 @@ class MinnieMax {
       ];
       while (stack.length > 0) {
         const { state, move, moves, player, first } = stack.pop();
-        if (moves < 1) {
-          continue;
-        }
-        const newMoves = [];
-        if (first) {
-          newMoves.push(move);
-        } else {
-          newMoves.push.apply(newMoves, this.generateMoves(state, player));
-        }
+        if (moves < 1) continue;
+        const newMoves = first ? [move] : this.generateMoves(state, player);
         for (const newMove of newMoves) {
           const next = this.applyMove(state, newMove);
           if (moves === 1 || this.isGameOver(next)) {
@@ -60,11 +54,16 @@ class MinnieMax {
               futureStates.push(next);
             }
           } else {
+            const nextPlayer = this.getPlayerFromState
+              ? next.player
+              : player === 1
+              ? 2
+              : 1;
             stack.push({
               state: next,
-              newMove,
+              move: newMove,
               moves: moves - 1,
-              player: player === 1 ? 2 : 1,
+              player: nextPlayer,
               first: false,
             });
           }
