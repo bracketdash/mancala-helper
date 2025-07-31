@@ -34,7 +34,7 @@ function init() {
   const game = new MancalaGame();
   const minnie = new MinnieMax({
     applyMove: game.applyMove.bind(game),
-    depth: 7,
+    depth: 6,
     evaluate: game.evaluate.bind(game),
     generateMoves: game.generateMoves,
     getPlayerFromState: true,

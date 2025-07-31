@@ -36,20 +36,21 @@ class MinnieMax {
       const stack = [
         {
           state,
-          move,
           moves: this.depth,
           player,
           first: true,
         },
       ];
       while (stack.length > 0) {
-        const { state, move, moves, player, first } = stack.pop();
-        if (moves < 1) continue;
+        const { state, moves, player, first } = stack.pop();
+        if (moves < 1) {
+          continue;
+        }
         const newMoves = first ? [move] : this.generateMoves(state, player);
         for (const newMove of newMoves) {
           const next = this.applyMove(state, newMove);
           if (moves === 1 || this.isGameOver(next)) {
-            const multiplier = Math.pow(5, moves - 1);
+            const multiplier = Math.pow(6, moves - 1);
             for (let i = 0; i < multiplier; i++) {
               futureStates.push(next);
             }
@@ -61,10 +62,8 @@ class MinnieMax {
               : 1;
             stack.push({
               state: next,
-              move: newMove,
               moves: moves - 1,
               player: nextPlayer,
-              first: false,
             });
           }
         }
