@@ -99,7 +99,9 @@ class MancalaGame {
   }
 
   evaluate(state, player) {
-    return state.bigPockets[player - 1];
+    return (
+      state.bigPockets[player - 1] - state.bigPockets[player === 1 ? 1 : 0]
+    );
   }
 
   generateMoves(state, player) {

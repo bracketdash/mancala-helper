@@ -39,7 +39,6 @@ function init() {
     generateMoves: game.generateMoves,
     getPlayerFromState: true,
     isGameOver: game.isGameOver,
-    maxMoves: 6,
   });
   document.querySelectorAll(".row").forEach((row, ri) => {
     Array.from(row.children).forEach((cell, ci) => {
