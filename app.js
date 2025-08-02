@@ -91,6 +91,13 @@ new MinnieMax({
     state.smolPockets.every((row) => row.every((cell) => cell === 0)),
   onChange: ({ minnie }) => {
     const { state, player } = minnie.getState();
+    const containerClassList = document.querySelector(".container").classList;
+    containerClassList.remove("one", "two");
+    if (player === 1) {
+      containerClassList.add("one");
+    } else {
+      containerClassList.add("two");
+    }
     const bigPockets = document.querySelectorAll(".big-pocket");
     state.bigPockets.forEach((value, index) => {
       bigPockets[index].innerHTML = value;
@@ -114,7 +121,13 @@ new MinnieMax({
       Array.from(row.children).forEach((cell, ci) => {
         cell.addEventListener("click", () => {
           const { state, player } = minnie.getState();
-          if (cell.innerText === "0" || minnie.isGameOver({ state })) {
+          const isPlayerOne = player === 1;
+          if (
+            cell.innerText === "0" ||
+            minnie.isGameOver({ state }) ||
+            (isPlayerOne && ri === 0) ||
+            (!isPlayerOne && ri === 1)
+          ) {
             return;
           }
           const { state: nextState, player: nextPlayer } = minnie.getNextState({

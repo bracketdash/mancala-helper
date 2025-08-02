@@ -84,15 +84,18 @@ body {
   line-height: 38px;
 }
 
-.cell:not(.empty) {
+.one .row:nth-child(2) .cell:not(.empty),
+.two .row:nth-child(1) .cell:not(.empty) {
   cursor: pointer;
 }
 
-.cell:not(.empty):hover {
+.one .row:nth-child(2) .cell:not(.empty):hover,
+.two .row:nth-child(1) .cell:not(.empty):hover {
   background: #ffc;
 }
 
-.cell:not(.empty):active {
+.one .row:nth-child(2) .cell:not(.empty):active,
+.two .row:nth-child(1) .cell:not(.empty):active {
   background: #dc9;
 }
 
