@@ -5,6 +5,7 @@ class MinnieMax {
     this.getNextState = config.getNextState;
     this.getStateScore = config.getStateScore;
     this.history = [{ state: config.initialState, player: 1 }];
+    this.initialState = config.initialState;
     this.isGameOver = config.isGameOver;
     this.localStorageKey = config.localStorageKey;
     this.movesAhead = config.initialMovesAhead;
@@ -28,8 +29,9 @@ class MinnieMax {
   }
 
   getScoredMoves(state, player) {
-    const thinker = this.el.shadowRoot.querySelector(".thinker").classList;
-    thinker.add("active");
+    const thinkingOrb =
+      this.el.shadowRoot.querySelector(".thinking-orb").classList;
+    thinkingOrb.add("active");
     return new Promise((resolve) => {
       requestAnimationFrame(() => {
         setTimeout(() => {
@@ -102,7 +104,7 @@ class MinnieMax {
                 : 0;
             scoredMoves.push({ move, score });
           });
-          thinker.remove("active");
+          thinkingOrb.remove("active");
           resolve(scoredMoves.sort((a, b) => (a.score <= b.score ? 1 : -1)));
         }, 5);
       });
@@ -143,17 +145,22 @@ class MinnieMax {
   render() {
     this.el.attachShadow({ mode: "open" });
     this.el.shadowRoot.innerHTML = `
-      <div class="thinking">Think</div>
-      <div class="number-control">
-        <div class="up">&#9650;</div>
-        <div class="depth">${this.movesAhead}</div>
-        <div class="down">&#9660;</div>
+      <div class="thinking-x-moves-ahead">
+        <div>Think</div>
+        <div class="number">
+          <div class="up">&#9650;</div>
+          <div class="value">${this.movesAhead}</div>
+          <div class="down">&#9660;</div>
+        </div>
+        <div>moves ahead:</div>
+        <div class="thinking-orb"></div>
       </div>
-      <div class="moves-ahead">moves ahead:</div>
-      <div class="thinker"></div>
-      <div class="undo" title="Undo">&#9100;</div>
+      <div class="buttons">
+        <div class="reset">New Game</div>
+        <div class="undo">Undo Move</div>
+      </div>
       <style>
-        :host {
+        .thinking-x-moves-ahead {
           align-items: center;
           display: flex;
           flex-direction: row;
@@ -164,7 +171,7 @@ class MinnieMax {
           font-size: 18px;
         }
 
-        .number-control {
+        .number {
           align-items: center;
           border-radius: 6px;
           border: 1px solid #ccc;
@@ -175,8 +182,7 @@ class MinnieMax {
           user-select: none;
         }
 
-        .number-control .up,
-        .number-control .down {
+        .up, .down {
           background: #e5e5e5;
           padding: 6px 12px;
           cursor: pointer;
@@ -186,17 +192,15 @@ class MinnieMax {
           width: 100%;
         }
 
-        .number-control .up:hover,
-        .number-control .down:hover {
+        .up:hover, .down:hover {
           background: #f0f0f0;
         }
 
-        .number-control .up:active,
-        .number-control .down:active {
+        .up:active, .down:active {
           background: #ddd;
         }
 
-        .number-control .depth {
+        .value {
           padding: 5px;
           font-size: 24px;
           font-weight: bold;
@@ -205,7 +209,7 @@ class MinnieMax {
           text-align: center;
         }
 
-        .thinker {
+        .thinking-orb {
           background: #999;
           border-radius: 50%;
           height: 42px;
@@ -217,7 +221,7 @@ class MinnieMax {
           width: 42px;
         }
 
-        .thinker::before {
+        .thinking-orb::before {
           animation: swirl 3s linear infinite;
           background: conic-gradient(from 0deg, #369, #147, #69b, #369);
           border-radius: 50%;
@@ -231,7 +235,7 @@ class MinnieMax {
           z-index: 0;
         }
 
-        .thinker::after {
+        .thinking-orb::after {
           background: radial-gradient(
             circle at 30% 30%,
             rgba(255, 255, 255, 0.2),
@@ -245,12 +249,12 @@ class MinnieMax {
           z-index: 1;
         }
 
-        .thinker:not(.active)::before {
+        .thinking-orb:not(.active)::before {
           animation-play-state: paused;
           opacity: 0;
         }
 
-        .thinker.active {
+        .thinking-orb.active {
           animation: pulse 3s ease-in-out infinite;
           background: #369;
           opacity: 1;
@@ -276,23 +280,32 @@ class MinnieMax {
           }
         }
 
-        .undo {
-          background: #e5e5e5;
-          border-radius: 50%;
-          border: 1px solid #bbb;
-          cursor: pointer;
-          font-size: 20px;
-          height: 31px;
-          line-height: 31px;
-          text-align: center;
-          width: 31px;
+        .buttons {
+          align-items: center;
+          display: flex;
+          gap: 10px;
+          justify-content: center;
+          margin: 20px auto;
+          user-select: none;
         }
 
-        .undo:hover {
+        .buttons > div {
+          background: #e5e5e5;
+          border-radius: 5px;
+          border: 1px solid #bbb;
+          cursor: pointer;
+          font-size: 14px;
+          height: 26px;
+          line-height: 26px;
+          padding: 0 10px;
+          text-align: center;
+        }
+
+        .buttons > div:hover {
           background: #f0f0f0;
         }
 
-        .undo:active {
+        .buttons > div:active {
           background: #ddd;
         }
       </style>
@@ -310,21 +323,31 @@ class MinnieMax {
     root.querySelector(".undo").addEventListener("click", () => {
       this._popState();
     });
+    root.querySelector(".reset").addEventListener("click", () => {
+      this._newGame();
+    });
   }
 
   _decreaseMovesAhead() {
     if (this.movesAhead > 1) {
       this.movesAhead--;
-      this.el.shadowRoot.querySelector(".depth").innerHTML = this.movesAhead;
-      if (this.onChange) {
-        this.onChange({ minnie: this });
-      }
+      this.el.shadowRoot.querySelector(".value").innerHTML = this.movesAhead;
+      this._onChange();
     }
   }
 
   _increaseMovesAhead() {
     this.movesAhead++;
-    this.el.shadowRoot.querySelector(".depth").innerHTML = this.movesAhead;
+    this.el.shadowRoot.querySelector(".value").innerHTML = this.movesAhead;
+    this._onChange();
+  }
+
+  _newGame() {
+    this.history = [{ state: this.initialState, player: 1 }];
+    this._updateLocalStorage();
+  }
+
+  _onChange() {
     if (this.onChange) {
       this.onChange({ minnie: this });
     }
@@ -335,9 +358,11 @@ class MinnieMax {
       return;
     }
     this.history.pop();
-    if (this.onChange) {
-      this.onChange({ minnie: this });
-    }
+    this._updateLocalStorage();
+  }
+
+  _updateLocalStorage() {
+    this._onChange();
     if (localStorage) {
       localStorage.setItem(this.localStorageKey, JSON.stringify(this.history));
     }
