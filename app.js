@@ -20,6 +20,7 @@ new MinnieMax({
     return moves;
   },
   getNextState: ({ state, player, move }) => {
+    // TODO: if player's side is all empty, immediately return same state with next player
     const bigPockets = [...state.bigPockets];
     const smolPockets = state.smolPockets.map((r) => [...r]);
     const opponentPlayer = 3 - player;
